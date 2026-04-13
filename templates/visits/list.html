@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Suivi des Examens IRM{% endblock %}
+
+{% block content %}
+<div class="card border-0 shadow-sm" style="border-radius: 16px;">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h5 class="fw-bold mb-1">Historique des Traitements IA</h5>
+                <p class="text-muted small mb-0">Suivez l'état d'extraction des biomarqueurs en temps réel.</p>
+            </div>
+            <a href="{% url 'visits:upload' %}" class="btn btn-primary">
+                <i class="fa-solid fa-plus me-2"></i>Nouvel Examen
+            </a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr class="text-muted small text-uppercase">
+                        <th style="font-weight: 600;">Patient</th>
+                        <th style="font-weight: 600;">Date Examen</th>
+                        <th style="font-weight: 600;">Format</th>
+                        <th style="font-weight: 600;">Fichiers</th>
+                        <th style="font-weight: 600;">Statut</th>
+                        <th style="font-weight: 600;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for visit in visits %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center fw-bold text-primary" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                                    {{ visit.patient.name|slice:":1" }}
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-dark">{{ visit.patient.name }}</div>
+                                    <div class="text-muted small">#{{ visit.patient.id|stringformat:"05d" }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-muted small">{{ visit.date|date:"d/m/Y" }}</td>
+                        <td>
+                            <span class="badge bg-light text-dark border">{{ visit.get_mri_format_display }}</span>
+                        </td>
+                        <td class="text-muted small">{{ visit.file_count }}</td>
+                        <td>
+                            {% if visit.status == 'completed' %}
+                                <span class="badge bg-success-subtle text-success px-3 py-2" style="border-radius: 8px;">
+                                    <i class="fa-solid fa-check-circle me-1"></i>Terminé
+                                </span>
+                            {% elif visit.status == 'processing' or visit.status == 'pending' %}
+                                <span class="badge bg-warning-subtle text-warning px-3 py-2" style="border-radius: 8px;">
+                                    <i class="fa-solid fa-spinner fa-spin me-1"></i>En cours...
+                                </span>
+                            {% else %}
+                                <span class="badge bg-danger-subtle text-danger px-3 py-2" style="border-radius: 8px;">
+                                    <i class="fa-solid fa-circle-xmark me-1"></i>Échoué
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'visits:status' visit.id %}" class="btn btn-sm btn-outline-primary" title="Voir l'avancement">
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
+                            {% if visit.status == 'completed' %}
+                            <a href="{% url 'patients:detail' visit.patient.id %}" class="btn btn-sm btn-light" title="Voir le dossier">
+                                <i class="fa-solid fa-folder-open"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <p>Aucun examen trouvé.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

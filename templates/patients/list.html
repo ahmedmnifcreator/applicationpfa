@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Répertoire des Patients{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <form class="d-flex w-50" method="GET">
+        <input type="text" name="q" class="form-control me-2 shadow-sm border-0" style="border-radius: var(--border-radius-btn); padding-left: 20px;" placeholder="Rechercher par nom..." value="{{ query }}">
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-search"></i></button>
+    </form>
+    <a href="{% url 'patients:add' %}" class="btn btn-primary shadow-soft">
+        <i class="fa-solid fa-user-plus me-2"></i> Ajouter un Patient
+    </a>
+</div>
+
+<div class="card p-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead style="background-color: #F4F7FE;">
+                <tr>
+                    <th class="border-0 text-muted px-4 py-3">ID</th>
+                    <th class="border-0 text-muted py-3">NOM</th>
+                    <th class="border-0 text-muted py-3">ÂGE / SEXE</th>
+                    <th class="border-0 text-muted py-3">STATUT</th>
+                    <th class="border-0 text-muted py-3 text-end px-4">ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody class="border-top-0">
+                {% for patient in patients %}
+                <tr>
+                    <td class="px-4 py-3"><span class="text-muted fw-bold">#{{ patient.id }}</span></td>
+                    <td class="py-3"><strong style="color: var(--text-primary); font-size: 16px;">{{ patient.name }}</strong></td>
+                    <td class="py-3 text-muted">{{ patient.age }} ans / {% if patient.gender == 'M' %}Homme{% elif patient.gender == 'F' %}Femme{% else %}Autre{% endif %}</td>
+                    <td class="py-3">
+                        {% if patient.diagnosis == 'CN' %}
+                            <span class="badge bg-success-soft">Sain (CN)</span>
+                        {% elif patient.diagnosis == 'MCI' %}
+                            <span class="badge bg-warning-soft">Déclin Léger (MCI)</span>
+                        {% else %}
+                            <span class="badge bg-danger-soft">Alzheimer (AD)</span>
+                        {% endif %}
+                    </td>
+                    <td class="py-3 text-end px-4 d-flex gap-2 justify-content-end">
+                        <a href="{% url 'patients:detail' patient.id %}" class="btn btn-sm" style="background: #eff6ff; color: #3b82f6; font-weight: 600; border-radius: 8px;">
+                            <i class="fa-solid fa-folder-open me-1"></i>Dossier
+                        </a>
+                        <a href="{% url 'patients:edit' patient.id %}" class="btn btn-sm" style="background: #f0fdf4; color: #10b981; font-weight: 600; border-radius: 8px;">
+                            <i class="fa-solid fa-pen me-1"></i>Modifier
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-5 text-muted">Aucun patient trouvé.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

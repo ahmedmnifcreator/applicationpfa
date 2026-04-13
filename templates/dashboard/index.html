@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Tableau de bord{% endblock %}
+
+{% block content %}
+<!-- Top Stats Row -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card p-4 border-0 h-100" style="border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-hospital-user text-primary"></i>
+                    <span style="font-weight: 600; color: #1e293b;">Patients Actifs</span>
+                </div>
+                <a href="{% url 'patients:list' %}" class="text-muted" style="font-size: 0.75rem;"><i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            <div class="d-flex justify-content-between align-items-end">
+                <div>
+                    <h2 class="mb-1" style="font-weight: 700; color: #0f172a; font-size: 2.2rem;">{{ total_patients }}</h2>
+                    <span class="text-muted" style="font-size: 0.8rem;">Dans la base de données</span>
+                </div>
+                <div class="d-flex align-items-end gap-1" style="height: 35px;">
+                    <div style="width: 7px; height: 40%; background: #dbeafe; border-radius: 2px;"></div>
+                    <div style="width: 7px; height: 60%; background: #93c5fd; border-radius: 2px;"></div>
+                    <div style="width: 7px; height: 35%; background: #dbeafe; border-radius: 2px;"></div>
+                    <div style="width: 7px; height: 100%; background: #3b82f6; border-radius: 2px;"></div>
+                    <div style="width: 7px; height: 50%; background: #dbeafe; border-radius: 2px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-4 border-0 h-100" style="border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-brain text-warning"></i>
+                    <span style="font-weight: 600; color: #1e293b;">Cas MCI / AD</span>
+                </div>
+                <a href="{% url 'patients:list' %}" class="text-muted" style="font-size: 0.75rem;"><i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            <div class="d-flex justify-content-between align-items-end">
+                <div>
+                    <h2 class="mb-1" style="font-weight: 700; color: #0f172a; font-size: 2.2rem;">{{ active_cases }}</h2>
+                    <span class="text-muted" style="font-size: 0.8rem;">Patients sous surveillance</span>
+                </div>
+                <div class="d-flex align-items-end gap-1" style="height: 35px;">
+                    <div style="width: 7px; height: 50%; background: #fef9c3; border-radius: 2px;"></div>
+                    <div style="width: 7px; height: 80%; background: #fde047; border-radius: 2px;"></div>
+                    <div style="width: 7px; height: 40%; background: #fef9c3; border-radius: 2px;"></div>
+                    <div style="width: 7px; height: 60%; background: #f59e0b; border-radius: 2px;"></div>
+                    <div style="width: 7px; height: 30%; background: #fef9c3; border-radius: 2px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-4 border-0 h-100" style="border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-file-waveform" style="color: #6366f1;"></i>
+                    <span style="font-weight: 600; color: #1e293b;">IRM Récents</span>
+                </div>
+                <a href="{% url 'visits:upload' %}" class="text-muted" style="font-size: 0.75rem;"><i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            <div class="d-flex justify-content-between align-items-end">
+                <div>
+                    <h2 class="mb-1" style="font-weight: 700; color: #0f172a; font-size: 2.2rem;">{{ recent_uploads|length }}</h2>
+                    <span class="text-muted" style="font-size: 0.8rem;">Dernières analyses</span>
+                </div>
+                <div class="d-flex align-items-end gap-1" style="height: 35px;">
+                    <div style="width: 7px; height: 30%; background: #e0e7ff; border-radius: 2px;"></div>
+                    <div style="width: 7px; height: 40%; background: #e0e7ff; border-radius: 2px;"></div>
+                    <div style="width: 7px; height: 90%; background: #6366f1; border-radius: 2px;"></div>
+                    <div style="width: 7px; height: 55%; background: #e0e7ff; border-radius: 2px;"></div>
+                    <div style="width: 7px; height: 20%; background: #e0e7ff; border-radius: 2px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content: Patients Table + Calendar -->
+<div class="row g-4">
+    <!-- Patients List -->
+    <div class="col-lg-8">
+        <div class="card border-0 p-4" style="border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h6 class="mb-1" style="font-weight: 700; color: #0f172a;">Patients Récents</h6>
+                    <span class="text-muted" style="font-size: 0.8rem;">Dernières analyses IRM soumises</span>
+                </div>
+                <a href="{% url 'patients:list' %}" class="text-primary text-decoration-none fw-semibold" style="font-size: 0.85rem;">Voir Tout</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-borderless align-middle mb-0">
+                    <thead style="border-bottom: 1px solid #f1f5f9;">
+                        <tr>
+                            <th class="text-muted fw-semibold pb-3" style="font-size: 0.75rem; text-transform: uppercase;">Nom</th>
+                            <th class="text-muted fw-semibold pb-3" style="font-size: 0.75rem; text-transform: uppercase;">N° Dossier</th>
+                                <th class="text-muted fw-semibold pb-3" style="font-size: 0.75rem; text-transform: uppercase;">Priorité</th>
+                                <th class="text-muted fw-semibold pb-3" style="font-size: 0.75rem; text-transform: uppercase;">Date Examen</th>
+                                <th class="text-muted fw-semibold pb-3" style="font-size: 0.75rem; text-transform: uppercase;">Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for visit in recent_uploads %}
+                            <tr style="border-bottom: 1px solid #f8fafc;">
+                                <td class="py-3">
+                                    <a href="{% url 'patients:detail' visit.patient.pk %}" class="text-decoration-none d-flex align-items-center gap-3">
+                                        <div class="d-flex justify-content-center align-items-center rounded-circle fw-bold" style="width: 38px; height: 38px; background: #eff6ff; color: #3b82f6; font-size: 0.9rem; flex-shrink: 0;">
+                                            {{ visit.patient.name|slice:":1" }}
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: 600; color: #1e293b; font-size: 0.9rem;">{{ visit.patient.name }}</div>
+                                            <div class="text-muted" style="font-size: 0.75rem;">{{ visit.patient.age }} ans · {% if visit.patient.gender == 'M' %}Homme{% elif visit.patient.gender == 'F' %}Femme{% else %}Autre{% endif %}</div>
+                                        </div>
+                                    </a>
+                                </td>
+                                <td class="py-3 text-muted" style="font-size: 0.85rem;">#{{ visit.patient.id|stringformat:"05d" }}</td>
+                                <td class="py-3">
+                                    {% if visit.patient.diagnosis == 'AD' %}
+                                        <span class="badge px-3 py-2" style="background: #fee2e2; color: #ef4444; border-radius: 20px; font-weight: 500;">Haute</span>
+                                    {% elif visit.patient.diagnosis == 'MCI' %}
+                                        <span class="badge px-3 py-2" style="background: #fef3c7; color: #f59e0b; border-radius: 20px; font-weight: 500;">Moyenne</span>
+                                    {% else %}
+                                        <span class="badge px-3 py-2" style="background: #dcfce7; color: #10b981; border-radius: 20px; font-weight: 500;">Faible</span>
+                                    {% endif %}
+                                </td>
+                                <td class="py-3 text-muted" style="font-size: 0.85rem;">{{ visit.date|date:"j M Y" }}</td>
+                                <td class="py-3">
+                                    <a href="{% url 'visits:status' visit.id %}" class="text-decoration-none">
+                                        {% if visit.status == 'completed' %}
+                                            <span class="text-success small fw-bold"><i class="fa-solid fa-check-circle me-1"></i>Prêt</span>
+                                        {% elif visit.status == 'processing' or visit.status == 'pending' %}
+                                            <span class="text-warning small fw-bold"><i class="fa-solid fa-spinner fa-spin me-1"></i>IA...</span>
+                                        {% else %}
+                                            <span class="text-danger small fw-bold"><i class="fa-solid fa-xmark-circle me-1"></i>Erreur</span>
+                                        {% endif %}
+                                    </a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                <i class="fa-solid fa-folder-open fa-2x mb-3 d-block" style="color: #cbd5e1;"></i>
+                                Aucune IRM soumise récemment.<br>
+                                <a href="{% url 'visits:upload' %}" class="text-primary fw-semibold">Ajouter une IRM →</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calendar Widget -->
+    <div class="col-lg-4">
+        <div class="card border-0 p-4" style="border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);">
+            <!-- Calendar Header -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 style="font-weight: 700; color: #0f172a; margin: 0;">{{ current_month_name }} {{ current_year }}</h6>
+                <div class="d-flex gap-1">
+                    <a href="?month={{ prev_month }}&year={{ prev_year }}" class="btn btn-sm" style="background: #f1f5f9; border-radius: 7px; line-height: 1; padding: 6px 10px;"><i class="fa-solid fa-chevron-left" style="font-size: 0.7rem; color: #64748b;"></i></a>
+                    <a href="?month={{ next_month }}&year={{ next_year }}" class="btn btn-sm" style="background: #f1f5f9; border-radius: 7px; line-height: 1; padding: 6px 10px;"><i class="fa-solid fa-chevron-right" style="font-size: 0.7rem; color: #64748b;"></i></a>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="d-flex gap-3 mb-3" style="font-size: 0.65rem; font-weight: 500; color: #94a3b8;">
+                <div class="d-flex align-items-center gap-1"><div style="width: 6px; height: 6px; border-radius: 50%; background: #3b82f6;"></div> Consultation</div>
+                <div class="d-flex align-items-center gap-1"><div style="width: 6px; height: 6px; border-radius: 50%; background: #ef4444;"></div> IRM</div>
+                <div class="d-flex align-items-center gap-1"><div style="width: 6px; height: 6px; border-radius: 50%; background: #10b981;"></div> Évaluation</div>
+            </div>
+
+            <!-- Day headers -->
+            <div class="row text-center mb-1" style="font-size: 0.65rem; font-weight: 600; color: #94a3b8;">
+                <div class="col">Lun</div><div class="col">Mar</div><div class="col">Mer</div>
+                <div class="col">Jeu</div><div class="col">Ven</div><div class="col">Sam</div><div class="col">Dim</div>
+            </div>
+
+            <!-- Calendar Weeks -->
+            {% for week in calendar_weeks %}
+            <div class="row text-center mb-1" style="font-size: 0.82rem; font-weight: 500; color: #1e293b;">
+                {% for day_info in week %}
+                <div class="col py-1 position-relative" style="cursor: pointer;"
+                    {% if day_info.day %}
+                    onclick="openAppointmentModal({{ current_year }}, {{ current_month }}, {{ day_info.day }})"
+                    {% endif %}>
+                    {% if day_info.day %}
+                        {% if day_info.is_today %}
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto text-white" style="width: 26px; height: 26px; background: #3b82f6; font-size: 0.8rem;">{{ day_info.day }}</div>
+                        {% else %}
+                        {{ day_info.day }}
+                        {% endif %}
+                        {% if day_info.appointments %}
+                        <div class="d-flex justify-content-center gap-1 mt-1">
+                            {% for appt in day_info.appointments %}
+                                {% if appt.appointment_type == 'Consultation' %}
+                                    <div style="width: 4px; height: 4px; border-radius: 50%; background: #3b82f6;"></div>
+                                {% elif appt.appointment_type == 'IRM' %}
+                                    <div style="width: 4px; height: 4px; border-radius: 50%; background: #ef4444;"></div>
+                                {% else %}
+                                    <div style="width: 4px; height: 4px; border-radius: 50%; background: #10b981;"></div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <span style="color: #cbd5e1;"></span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <!-- Add Appointment Button -->
+            <button class="btn btn-primary w-100 mt-3 py-2" onclick="openAppointmentModal({{ current_year }}, {{ current_month }}, null)" style="border-radius: 8px; font-size: 0.85rem; font-weight: 600;">
+                <i class="fa-solid fa-plus me-1"></i> Nouveau Rendez-vous
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Appointment Modal -->
+<div class="modal fade" id="appointmentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0" style="border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.15);">
+            <div class="modal-header border-0 pb-0 px-4 pt-4">
+                <h5 class="modal-title" style="font-weight: 700; color: #0f172a;">Nouveau Rendez-vous</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'patients:appointment_add' %}">
+                {% csrf_token %}
+                <div class="modal-body px-4 pb-2">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Patient</label>
+                        <select name="patient" id="modal_patient" class="form-select" style="border-radius: 8px; border-color: #e2e8f0;" required>
+                            <option value="">-- Choisir un patient --</option>
+                            {% for visit in recent_uploads %}
+                            <option value="{{ visit.patient.pk }}">{{ visit.patient.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-7">
+                            <label class="form-label fw-semibold text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Date</label>
+                            <input type="date" name="date" id="modal_date" class="form-control" style="border-radius: 8px; border-color: #e2e8f0;" required>
+                        </div>
+                        <div class="col-5">
+                            <label class="form-label fw-semibold text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Heure</label>
+                            <input type="time" name="time" id="modal_time" class="form-control" style="border-radius: 8px; border-color: #e2e8f0;">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Type</label>
+                        <select name="appointment_type" class="form-select" style="border-radius: 8px; border-color: #e2e8f0;">
+                            <option value="Consultation">🔵 Consultation</option>
+                            <option value="IRM">🔴 IRM</option>
+                            <option value="Evaluation">🟢 Évaluation</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Notes</label>
+                        <textarea name="notes" class="form-control" rows="2" style="border-radius: 8px; border-color: #e2e8f0;" placeholder="Optionnel..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 px-4 pb-4 pt-2">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius: 8px;">Annuler</button>
+                    <button type="submit" class="btn btn-primary px-4" style="border-radius: 8px; font-weight: 600;">Confirmer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function openAppointmentModal(year, month, day) {
+    const modal = new bootstrap.Modal(document.getElementById('appointmentModal'));
+    if (day) {
+        const mm = String(month).padStart(2, '0');
+        const dd = String(day).padStart(2, '0');
+        document.getElementById('modal_date').value = `${year}-${mm}-${dd}`;
+    }
+    modal.show();
+}
+</script>
+{% endblock %}

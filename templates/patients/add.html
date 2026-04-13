@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Ajouter un Nouveau Patient{% endblock %}
+
+{% block content %}
+<div class="card p-5 mx-auto shadow-sm" style="max-width: 650px; border-radius: var(--border-radius-card);">
+    <div class="text-center mb-4">
+        <h4 class="fw-bold text-primary">Créer un Dossier Patient</h4>
+        <p class="text-muted">Veuillez remplir les informations cliniques initiales.</p>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-4">
+            <label class="form-label fw-bold text-secondary">Nom Complet</label>
+            <input type="text" name="name" class="form-control border-0 bg-light p-3 rounded" placeholder="Ex: Jean Dupont" required>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <label class="form-label fw-bold text-secondary">Âge</label>
+                <input type="number" name="age" class="form-control border-0 bg-light p-3 rounded" placeholder="Ex: 68" required>
+            </div>
+            <div class="col-md-6 mb-4">
+                <label class="form-label fw-bold text-secondary">Sexe</label>
+                <select name="gender" class="form-select border-0 bg-light p-3 rounded">
+                    <option value="M">Homme</option>
+                    <option value="F">Femme</option>
+                    <option value="O">Autre</option>
+                </select>
+            </div>
+        </div>
+        <div class="mb-4">
+            <label class="form-label fw-bold text-secondary">Diagnostic Initial</label>
+            <select name="diagnosis" class="form-select border-0 bg-light p-3 rounded">
+                <option value="CN">CN — Cognitively Normal (Sain)</option>
+                <option value="MCI">MCI — Mild Cognitive Impairment (Précoce)</option>
+                <option value="AD">AD — Alzheimer's Disease</option>
+            </select>
+        </div>
+        <div class="mb-5">
+            <label class="form-label fw-bold text-secondary">Notes Cliniques</label>
+            <textarea name="clinical_notes" class="form-control border-0 bg-light p-3 rounded" rows="4" placeholder="Antécédents familiaux, troubles remarqués..."></textarea>
+        </div>
+        <div class="d-flex justify-content-end gap-3">
+            <a href="{% url 'patients:list' %}" class="btn px-4 py-2 text-secondary fw-bold bg-light" style="border-radius: 12px; border: 1px solid #E9EDF7;">Annuler</a>
+            <button type="submit" class="btn btn-primary px-5 py-2 fw-bold shadow-soft" style="border-radius: 12px;">Enregistrer le Dossier</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

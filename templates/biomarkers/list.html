@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Base de Données des Biomarqueurs{% endblock %}
+
+{% block content %}
+<div class="card p-0 overflow-hidden shadow-sm">
+    <div class="p-4 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 text-primary fw-bold"><i class="fa-solid fa-database me-2"></i>  Caractéristiques Morphologiques</h5>
+        <a href="{% url 'biomarkers:export_csv' %}" class="btn btn-sm btn-light fw-bold text-secondary" style="border: 1px solid #E9EDF7;"><i class="fa-solid fa-download me-1"></i> Exporter CSV</a>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead style="background-color: #F4F7FE;">
+                <tr>
+                    <th class="border-0 text-muted px-4 py-3">PATIENT</th>
+                    <th class="border-0 text-muted py-3">DIAGNOSTIC</th>
+                    <th class="border-0 text-muted py-3">DATE IRM</th>
+                    <th class="border-0 text-muted py-3">VOLUME (mm³)</th>
+                    <th class="border-0 text-muted py-3">DISTANCE KENDALL</th>
+                    <th class="border-0 text-muted py-3 text-end px-4">RISQUE (App 3)</th>
+                </tr>
+            </thead>
+            <tbody class="border-top-0">
+                {% for b in biomarkers %}
+                <tr>
+                    <td class="px-4 py-3"><a href="{% url 'patients:detail' b.visit.patient.id %}" class="text-decoration-none fw-bold" style="color: var(--brand-primary); font-size: 15px;">{{ b.visit.patient.name }}</a></td>
+                    <td class="py-3">
+                        <span class="badge 
+                            {% if b.visit.patient.diagnosis == 'CN' %}bg-success-soft
+                            {% elif b.visit.patient.diagnosis == 'MCI' %}bg-warning-soft
+                            {% else %}bg-danger-soft{% endif %}">
+                            {{ b.visit.patient.diagnosis }}
+                        </span>
+                    </td>
+                    <td class="py-3 text-muted">{{ b.visit.date }}</td>
+                    <td class="py-3 fw-bold" style="color: var(--text-primary);">{{ b.volume|floatformat:2 }}</td>
+                    <td class="py-3 text-muted">
+                        {% if b.kendall_distance %}
+                            {{ b.kendall_distance|floatformat:3 }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td class="py-3 text-end px-4 fw-bold {% if b.risk_score and b.risk_score > 60 %}text-danger{% elif b.risk_score and b.risk_score > 30 %}text-warning{% else %}text-success{% endif %}">
+                        {% if b.risk_score %}
+                            {{ b.risk_score|floatformat:1 }}%
+                            {% if b.risk_score > 60 %}<i class="fa-solid fa-circle-exclamation ms-1"></i>{% endif %}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">Aucune donnée de biomarqueur disponible.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

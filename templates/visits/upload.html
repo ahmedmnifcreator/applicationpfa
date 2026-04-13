@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Importer une IRM{% endblock %}
+
+{% block content %}
+<div class="card p-5 mx-auto shadow-sm border-0" style="max-width: 680px; border-radius: 16px;">
+    <div class="text-center mb-5">
+        <div class="d-flex justify-content-center align-items-center rounded-circle mx-auto mb-3" style="width: 72px; height: 72px; background: #eff6ff;">
+            <i class="fa-solid fa-cloud-arrow-up fa-2x" style="color: #3b82f6;"></i>
+        </div>
+        <h4 class="fw-bold" style="color: #0f172a;">Importer un Examen IRM</h4>
+        <p class="text-muted">Accepte les séries DICOM (fichiers .dcm), les archives ZIP et les fichiers NIfTI (.nii / .nii.gz).</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" id="uploadForm">
+        {% csrf_token %}
+
+        <!-- Patient -->
+        <div class="mb-4">
+            <label class="form-label fw-semibold text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Patient</label>
+            <select name="patient" id="patientSelect" class="form-select" style="border-radius: 8px; border-color: #e2e8f0;" required>
+                <option value="">-- Choisir un patient --</option>
+                {% for p in patients %}
+                <option value="{{ p.id }}" {% if p.id|stringformat:"s" == selected_patient_id %}selected{% endif %}>
+                    {{ p.name }} &nbsp;·&nbsp; {{ p.diagnosis }} &nbsp;·&nbsp; {{ p.age }} ans
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Date: auto today -->
+        <div class="mb-4">
+            <label class="form-label fw-semibold text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                Date de l'examen
+                <span class="badge ms-2" style="background: #dcfce7; color: #10b981; font-weight: 500; font-size: 0.68rem; border-radius: 6px;">Auto</span>
+            </label>
+            <input type="date" name="date" id="examDate" class="form-control" style="border-radius: 8px; border-color: #e2e8f0;"
+                   value="{{ today }}" max="{{ today }}">
+        </div>
+
+        <!-- Format selector -->
+        <div class="mb-4">
+            <label class="form-label fw-semibold text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Format de l'IRM</label>
+            <div class="d-flex gap-3">
+                <label class="flex-fill text-center border rounded-3 p-3 format-option" style="cursor: pointer; border-color: #3b82f6 !important; background: #eff6ff;">
+                    <input type="radio" name="upload_mode" value="dicom" class="d-none" checked>
+                    <i class="fa-solid fa-layer-group fa-lg mb-2 d-block" style="color: #3b82f6;"></i>
+                    <div style="font-weight: 600; font-size: 0.85rem; color: #1e293b;">DICOM</div>
+                    <small class="text-muted">Sélectionner tous les .dcm</small>
+                </label>
+                <label class="flex-fill text-center border rounded-3 p-3 format-option" style="cursor: pointer;">
+                    <input type="radio" name="upload_mode" value="zip" class="d-none">
+                    <i class="fa-solid fa-file-zipper fa-lg mb-2 d-block" style="color: #6366f1;"></i>
+                    <div style="font-weight: 600; font-size: 0.85rem; color: #1e293b;">Archive ZIP</div>
+                    <small class="text-muted">Un seul fichier .zip</small>
+                </label>
+                <label class="flex-fill text-center border rounded-3 p-3 format-option" style="cursor: pointer;">
+                    <input type="radio" name="upload_mode" value="nifti" class="d-none">
+                    <i class="fa-solid fa-file-medical fa-lg mb-2 d-block" style="color: #10b981;"></i>
+                    <div style="font-weight: 600; font-size: 0.85rem; color: #1e293b;">NIfTI</div>
+                    <small class="text-muted">.nii ou .nii.gz</small>
+                </label>
+            </div>
+        </div>
+
+        <!-- File zone DICOM (multiple .dcm) -->
+        <div class="mb-5" id="zone-dicom">
+            <label class="form-label fw-semibold text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Fichiers DICOM (.dcm)</label>
+            <div class="border rounded-3 p-4 text-center position-relative" id="dropZoneDicom" style="border-color: #e2e8f0; border-style: dashed; background: #f8fafc; cursor: pointer; transition: all .2s;"
+                 onclick="document.getElementById('dicomInput').click()">
+                <i class="fa-solid fa-folder-open fa-2x mb-3 d-block" style="color: #94a3b8;"></i>
+                <p class="mb-1 fw-semibold" style="color: #1e293b;">Cliquez ou glissez les fichiers .dcm ici</p>
+                <small class="text-muted" id="dicomLabel">Sélectionnez tous les fichiers de la série (ex: 166 fichiers .dcm)</small>
+                <input type="file" name="mri_files" id="dicomInput" multiple accept=".dcm" class="d-none">
+            </div>
+        </div>
+
+        <!-- File zone ZIP -->
+        <div class="mb-5 d-none" id="zone-zip">
+            <label class="form-label fw-semibold text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Archive ZIP du dossier DICOM</label>
+            <input type="file" name="mri_file" id="zipInput" accept=".zip" class="form-control" style="border-radius: 8px; border-color: #e2e8f0;">
+            <small class="text-muted">Compressez d'abord le dossier DICOM en ZIP, puis importez-le ici.</small>
+        </div>
+
+        <!-- File zone NIfTI -->
+        <div class="mb-5 d-none" id="zone-nifti">
+            <label class="form-label fw-semibold text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Fichier NIfTI</label>
+            <input type="file" name="mri_file" id="niftiInput" accept=".nii,.nii.gz" class="form-control" style="border-radius: 8px; border-color: #e2e8f0;">
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn btn-primary w-100 py-3 fw-bold" style="border-radius: 12px; font-size: 1rem;">
+            <i class="fa-solid fa-cloud-arrow-up me-2"></i>Soumettre l'IRM
+        </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// ── Format switcher ──────────────────────────────────────────────
+const options = document.querySelectorAll('.format-option');
+const radios  = document.querySelectorAll('[name="upload_mode"]');
+
+options.forEach(opt => {
+    opt.addEventListener('click', () => {
+        // Reset all
+        options.forEach(o => {
+            o.style.background = '';
+            o.style.borderColor = '#e2e8f0';
+        });
+        // Highlight selected
+        opt.style.background = '#eff6ff';
+        opt.style.borderColor = '#3b82f6';
+
+        const val = opt.querySelector('input[type="radio"]').value;
+        document.getElementById('zone-dicom').classList.toggle('d-none', val !== 'dicom');
+        document.getElementById('zone-zip').classList.toggle('d-none',   val !== 'zip');
+        document.getElementById('zone-nifti').classList.toggle('d-none', val !== 'nifti');
+    });
+});
+
+// ── DICOM multi-file counter ─────────────────────────────────────
+const dicomInput = document.getElementById('dicomInput');
+const dicomLabel = document.getElementById('dicomLabel');
+const dropZone   = document.getElementById('dropZoneDicom');
+
+dicomInput.addEventListener('change', () => updateDicomLabel(dicomInput.files));
+
+// Drag & Drop
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.style.borderColor = '#3b82f6'; dropZone.style.background = '#eff6ff'; });
+dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = '#e2e8f0'; dropZone.style.background = '#f8fafc'; });
+dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.style.borderColor = '#e2e8f0'; dropZone.style.background = '#f8fafc';
+    // Transfer files to input
+    const dt = new DataTransfer();
+    [...e.dataTransfer.files].filter(f => f.name.toLowerCase().endsWith('.dcm')).forEach(f => dt.items.add(f));
+    dicomInput.files = dt.files;
+    updateDicomLabel(dicomInput.files);
+});
+
+function updateDicomLabel(files) {
+    if (files.length > 0) {
+        dicomLabel.innerHTML = `<span class="text-success fw-bold"><i class="fa-solid fa-check-circle me-1"></i>${files.length} fichier(s) .dcm sélectionné(s)</span>`;
+        dropZone.style.borderColor = '#10b981';
+        dropZone.style.background  = '#f0fdf4';
+    } else {
+        dicomLabel.textContent = 'Sélectionnez tous les fichiers de la série (ex: 166 fichiers .dcm)';
+        dropZone.style.borderColor = '#e2e8f0';
+        dropZone.style.background  = '#f8fafc';
+    }
+}
+
+// ── Upload progress feedback ─────────────────────────────────────
+document.getElementById('uploadForm').addEventListener('submit', () => {
+    const btn = document.getElementById('submitBtn');
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Envoi en cours...';
+    btn.disabled = true;
+});
+</script>
+{% endblock %}

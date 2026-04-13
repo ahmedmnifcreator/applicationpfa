@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HHO Alzheimer's Monitor{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+{% if user.is_authenticated %}
+<div class="container-fluid">
+    <div class="row flex-nowrap">
+        <!-- Sidebar -->
+        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 sidebar">
+            <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 min-vh-100 w-100">
+                <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-decoration-none sidebar-brand w-100 justify-content-center">
+                    <i class="fa-solid fa-brain"></i> <span class="d-none d-sm-inline">La3ziiz</span>
+                </a>
+                <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start w-100" id="menu">
+                    <li class="nav-item w-100">
+                        <a href="{% url 'dashboard:index' %}" class="nav-link align-middle">
+                            <i class="fa-solid fa-chart-pie"></i> <span class="ms-1 d-none d-sm-inline">Tableau de bord</span>
+                        </a>
+                    </li>
+                    <li class="nav-item w-100">
+                        <a href="{% url 'patients:list' %}" class="nav-link align-middle">
+                            <i class="fa-solid fa-users"></i> <span class="ms-1 d-none d-sm-inline">Patients</span>
+                        </a>
+                    </li>
+                    <li class="nav-item w-100">
+                        <a href="{% url 'visits:upload' %}" class="nav-link align-middle">
+                            <i class="fa-solid fa-file-medical"></i> <span class="ms-1 d-none d-sm-inline">Ajouter une IRM</span>
+                        </a>
+                    </li>
+                    <li class="nav-item w-100">
+                        <a href="{% url 'visits:list' %}" class="nav-link align-middle">
+                            <i class="fa-solid fa-list-check"></i> <span class="ms-1 d-none d-sm-inline">Suivi des Examens</span>
+                        </a>
+                    </li>
+                    <li class="nav-item w-100">
+                        <a href="{% url 'biomarkers:list' %}" class="nav-link align-middle">
+                            <i class="fa-solid fa-dna"></i> <span class="ms-1 d-none d-sm-inline">Biomarqueurs</span>
+                        </a>
+                    </li>
+                    <li class="nav-item w-100">
+                        <a href="{% url 'analytics:dashboard' %}" class="nav-link align-middle">
+                            <i class="fa-solid fa-microchip"></i> <span class="ms-1 d-none d-sm-inline">Analyses IA</span>
+                        </a>
+                    </li>
+                </ul>
+                <hr style="border-color: #E9EDF7; width: 100%;">
+                <div class="dropdown pb-4 mb-4 w-100 text-center text-sm-start px-3">
+                    <a href="{% url 'accounts:logout' %}" class="d-flex align-items-center text-decoration-none" style="color: var(--text-secondary); font-weight: 600;">
+                        <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> <span class="d-none d-sm-inline">Déconnexion</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col py-3 px-4">
+            <nav class="navbar navbar-expand-lg top-navbar mb-4">
+                <div class="container-fluid px-0">
+                    <span class="navbar-brand">{% block page_title %}Vue d'ensemble{% endblock %}</span>
+                    <div class="d-flex align-items-center">
+                        <div class="text-end me-3">
+                            <h6 class="mb-0 text-primary" style="font-weight: 700; font-size: 14px;">Dr. {{ user.username }}</h6>
+                            <small class="text-muted" style="font-size: 11px;">Neurologue</small>
+                        </div>
+                        <i class="fa-solid fa-circle-user fs-1" style="color: #E9EDF7;"></i>
+                    </div>
+                </div>
+            </nav>
+            <div class="">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+    {% block auth_content %}{% endblock %}
+{% endif %}
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

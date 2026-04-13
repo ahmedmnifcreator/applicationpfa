@@ -1,0 +1,79 @@
+# Title Segmentation Statistics
+#
+# generating_program segstats.py
+# FastSurfer_version 2.4.2
+# cmdline /fastsurfer/HypVINN/run_prediction.py --sd /data/output --sid visit_16 --reg_mode coreg --threads 1 --async_io --batch_size 1 --seg_log /data/output/visit_16/scripts/deep-seg.log --device cuda --viewagg_device auto --t1 /data/output/visit_16/mri/orig_nu.mgz
+# sysname  Linux
+# hostname c7d22c478f77
+# machine  x86_64
+# user       root
+# anatomy_type volume
+#
+# subjectname None
+# SegVolFile /data/output/visit_16/mri/hypothalamus.HypVINN.nii.gz
+# SegVolFileTimestamp 2026/04/08 23:42:15
+# ColorTable /fastsurfer/FastSurferCNN/config/FreeSurferColorLUT.txt
+# ColorTableTimestamp 2024/09/04 10:37:40
+# InVolFile /data/output/visit_16/mri/orig_nu.mgz
+# InVolFileTimestamp 2026/04/08 23:39:12
+# ExcludeSegId 0
+# Only reporting non-empty segmentations
+# compatibility with freesurfer's mri_segstats: fixed
+# VoxelVolume_mm3 0.823974609375
+# TableCol  1 ColHeader Index
+# TableCol  1 FieldName Index
+# TableCol  1 Units     NA
+# TableCol  2 ColHeader SegId
+# TableCol  2 FieldName Segmentation Id
+# TableCol  2 Units     NA
+# TableCol  3 ColHeader NVoxels
+# TableCol  3 FieldName Number of Voxels
+# TableCol  3 Units     unitless
+# TableCol  4 ColHeader Volume_mm3
+# TableCol  4 FieldName Volume
+# TableCol  4 Units     mm^3
+# TableCol  5 ColHeader StructName
+# TableCol  5 FieldName Structure Name
+# TableCol  5 Units     NA
+# TableCol  6 ColHeader normMean
+# TableCol  6 FieldName Intensity normMean
+# TableCol  6 Units     MR
+# TableCol  7 ColHeader normStdDev
+# TableCol  7 FieldName Intensity normStdDev
+# TableCol  7 Units     MR
+# TableCol  8 ColHeader normMin
+# TableCol  8 FieldName Intensity normMin
+# TableCol  8 Units     MR
+# TableCol  9 ColHeader normMax
+# TableCol  9 FieldName Intensity normMax
+# TableCol  9 Units     MR
+# TableCol 10 ColHeader normRange
+# TableCol 10 FieldName Intensity normRange
+# TableCol 10 Units     MR
+# NRows 24
+# NTableCols 10
+# ColHeaders  Index SegId NVoxels Volume_mm3 StructName normMean normStdDev normMin normMax normRange
+  1 961       530      412.7  R-N.opticus                       77.1245    18.3099    36.0000   127.0000    91.0000
+  2 962       535      439.1  L-N.opticus                       72.8150    20.6048    24.0000   120.0000    96.0000
+  3 963       138       96.3  R-C.mammilare                     81.9130    19.0709    40.0000   113.0000    73.0000
+  4 964       257      206.5  R-Optic-tract                     94.4319    22.4518    31.0000   130.0000    99.0000
+  5 965       228      184.8  L-Optic-tract                     93.9912    22.9938    31.0000   134.0000   103.0000
+  6 966       108       71.9  L-C.mammilare                     80.3333    18.9461    39.0000   110.0000    71.0000
+  7 967       207      136.1  R-Chiasma-Opticum                 76.2947    29.2053    28.0000   130.0000   102.0000
+  8 968       220      142.7  L-Chiasma-Opticum                 76.2727    29.3657    25.0000   131.0000   106.0000
+  9 969       108      132.4  Ant-Commisure                     98.9907    13.3972    62.0000   125.0000    63.0000
+ 10 970      2769     2315.3  Third-Ventricle                   30.8729    12.2022    11.0000    80.0000    69.0000
+ 11 971       133      122.8  R-Fornix                          90.8120    15.8889    49.0000   124.0000    75.0000
+ 12 972       138      131.2  L-Fornix                          87.8841    16.0347    45.0000   122.0000    77.0000
+ 13 973       241      196.7  Epiphysis                         49.0705    10.5818    23.0000    73.0000    50.0000
+ 14 974       821      649.0  Hypophysis                        83.3094    25.1576    25.0000   188.0000   163.0000
+ 15 975        70       43.2  Infundibulum                      51.1000    12.4402    30.0000    88.0000    58.0000
+ 16 976        90       57.3  Tuberal-Region                    55.2111    12.9532    30.0000    79.0000    49.0000
+ 17 977        57       31.2  L-Med-Hypothalamus                67.5789    13.0725    37.0000    91.0000    54.0000
+ 18 978        67       46.8  L-Lat-Hypothalamus                86.5672     6.7694    70.0000   101.0000    31.0000
+ 19 979        78       55.1  L-Ant-Hypothalamus                75.0385    11.9853    49.0000    96.0000    47.0000
+ 20 980       159      128.9  L-Post-Hypothalamus               87.7107    12.8326    55.0000   106.0000    51.0000
+ 21 981        56       35.6  R-Med-Hypothalamus                77.1429     8.4562    57.0000    95.0000    38.0000
+ 22 982        72       57.4  R-Lat-Hypothalamus                93.6250    11.2606    59.0000   114.0000    55.0000
+ 23 983        99       76.6  R-Ant-Hypothalamus                78.2929    10.7800    50.0000    98.0000    48.0000
+ 24 984       217      173.0  R-Post-Hypothalamus               90.3134    13.7573    52.0000   113.0000    61.0000

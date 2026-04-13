@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Statut du Traitement IRM{% endblock %}
+{% block extra_head %}
+<!-- Refresh page automatically every 3 seconds if status is pending -->
+{% if visit.status == 'pending' or visit.status == 'processing' %}
+<meta http-equiv="refresh" content="3">
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="card p-5 text-center mx-auto shadow-sm" style="max-width: 650px; border-radius: var(--border-radius-card);">
+    {% if visit.status == 'pending' or visit.status == 'processing' %}
+        <div class="spinner-border text-primary mx-auto mb-4" role="status" style="width: 4rem; height: 4rem; border-width: 6px;"></div>
+        <h3 class="mt-2 text-primary fw-bold">Analyse Neuronale en cours...</h3>
+        <p class="text-muted mt-3 mb-4 px-3" style="line-height: 1.6;">Le pipeline extrait actuellement les caractéristiques volumétriques, analyse les données géométriques de l'hippocampe et compile les métriques prédictives. Veuillez patienter.</p>
+        <div class="progress mt-2" style="height: 15px; border-radius: 20px; background-color: #E9EDF7;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 100%; border-radius: 20px;"></div>
+        </div>
+        <p class="small text-muted mt-3"><i class="fa-solid fa-clock"></i> Estimation : 1 à 2 minutes</p>
+    {% elif visit.status == 'completed' %}
+        <div class="icon-box mx-auto mb-4" style="background-color: #E8FDF5; color: var(--success); width: 80px; height: 80px; font-size: 40px;">
+            <i class="fa-solid fa-check"></i>
+        </div>
+        <h3 class="mt-2 text-success fw-bold">Analyse Terminée</h3>
+        <p class="text-muted mt-3">Les biomarqueurs ont été extraits et le score de risque généré avec succès pour le patient <strong>{{ visit.patient.name }}</strong>.</p>
+        <div class="mt-5 d-flex justify-content-center gap-3">
+            <a href="{% url 'patients:detail' visit.patient.id %}" class="btn btn-primary px-4 py-2">Ouvrir le Dossier</a>
+            <a href="{% url 'biomarkers:list' %}" class="btn bg-light px-4 py-2 text-secondary fw-bold" style="border: 1px solid #E9EDF7;">Tous les Biomarqueurs</a>
+        </div>
+    {% else %}
+        <div class="icon-box mx-auto mb-4" style="background-color: #FDE8E7; color: var(--danger); width: 80px; height: 80px; font-size: 40px;">
+            <i class="fa-solid fa-xmark"></i>
+        </div>
+        <h3 class="mt-2 text-danger fw-bold">Échec du Pipeline</h3>
+        <p class="text-muted mt-3">Une erreur est survenue lors du décodage de l'imagerie ou lors de l'extraction. Veuillez vérifier le format de votre NIFTI/DICOM.</p>
+        <div class="mt-4">
+            <a href="{% url 'visits:upload' %}" class="btn btn-primary px-4">Réessayer d'importer</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

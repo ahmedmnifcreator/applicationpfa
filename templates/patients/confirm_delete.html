@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Supprimer le Patient{% endblock %}
+
+{% block content %}
+<div class="card p-5 mx-auto text-center border-0" style="max-width: 500px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
+    <div class="mb-4">
+        <div class="d-flex justify-content-center align-items-center rounded-circle mx-auto mb-3" style="width: 70px; height: 70px; background: #fee2e2;">
+            <i class="fa-solid fa-trash-can fa-2x" style="color: #ef4444;"></i>
+        </div>
+        <h5 class="fw-bold" style="color: #0f172a;">Confirmer la Suppression</h5>
+        <p class="text-muted">Voulez-vous vraiment supprimer le dossier de <strong>{{ patient.name }}</strong> ?<br>
+        <span class="text-danger" style="font-size: 0.85rem;">Cette action est irréversible et supprimera toutes les IRM associées.</span></p>
+    </div>
+    <div class="d-flex justify-content-center gap-3">
+        <a href="{% url 'patients:detail' patient.pk %}" class="btn btn-light border px-4" style="border-radius: 8px;">Annuler</a>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger px-4" style="border-radius: 8px; font-weight: 600;">
+                <i class="fa-solid fa-trash me-1"></i>Supprimer Définitivement
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
